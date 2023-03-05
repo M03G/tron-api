@@ -1,9 +1,9 @@
 {
-    "name": "iexbase/tron-api",
+    "name": "M03G/tron-api",
     "description": "A PHP API for interacting with Tron (Trx)",
     "license": "MIT",
     "type":   "library",
-    "homepage": "https://github.com/iexbase/tron-api",
+    "homepage": "https://github.com/M03G/tron-api",
     "authors": [
         {
             "name": "Shamsudin Serderov",
@@ -11,7 +11,7 @@
         }
     ],
     "keywords": [
-        "iexbase",
+        "M03G",
         "tron-lib",
         "tron-php",
         "tron-api",
