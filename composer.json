@@ -1,5 +1,5 @@
 {
-    "name": "M03G/tron-api",
+    "name": "m03g/tron-api",
     "description": "A PHP API for interacting with Tron (Trx)",
     "license": "MIT",
     "type":   "library",
@@ -11,7 +11,7 @@
         }
     ],
     "keywords": [
-        "M03G",
+        "m03g",
         "tron-lib",
         "tron-php",
         "tron-api",
