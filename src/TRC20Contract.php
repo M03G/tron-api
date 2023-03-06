@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace IEXBase\TronAPI;
 
-use Comely\DataTypes\BcNumber;
 use IEXBase\TronAPI\Exception\TRC20Exception;
 use IEXBase\TronAPI\Exception\TronException;
 
@@ -96,7 +95,7 @@ class TRC20Contract
         $this->_tron = $tron;
 
         // If abi is absent, then it takes by default
-        if(is_null($abi)) {
+        if (is_null($abi)) {
             $abi = file_get_contents(__DIR__.'/trc20.json');
         }
 
@@ -247,7 +246,7 @@ class TRC20Contract
      */
     public function balanceOf(string $address = null, bool $scaled = true): string
     {
-        if(is_null($address))
+        if (is_null($address))
             $address = $this->_tron->address['base58'];
 
         $addr = str_pad($this->_tron->address2HexString($address), 64, "0", STR_PAD_LEFT);
@@ -275,7 +274,7 @@ class TRC20Contract
      */
     public function transfer(string $to, string $amount, string $from = null): array
     {
-        if($from == null) {
+        if ($from == null) {
             $from = $this->_tron->address['base58'];
         }
 
@@ -379,7 +378,7 @@ class TRC20Contract
      */
     protected function decimalValue(string $int, int $scale = 18): string
     {
-        return (new BcNumber($int))->divide(pow(10, $scale), $scale)->value();
+        return bcdiv($int, bcpow('10', $scale), $scale);
     }
 
     /**
