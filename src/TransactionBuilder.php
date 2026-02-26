@@ -260,7 +260,7 @@ class TransactionBuilder
      */
     public function freezeBalance(float $amount = 0, int $duration = 3, string $resource = 'BANDWIDTH', string $address = null)
     {
-        if(empty($address))
+        if (empty($address))
             throw new TronException('Address not specified');
 
         if (!in_array($resource, ['BANDWIDTH', 'ENERGY'])) {
@@ -271,7 +271,7 @@ class TransactionBuilder
             throw new TronException('Invalid amount provided');
         }
 
-        if(!is_integer($duration) and $duration < 3) {
+        if (!is_integer($duration) and $duration < 3) {
             throw new TronException('Invalid duration provided, minimum of 3 days');
         }
 
@@ -294,7 +294,7 @@ class TransactionBuilder
      */
     public function unfreezeBalance(string $resource = 'BANDWIDTH', string $owner_address = null)
     {
-        if(is_null($owner_address)) {
+        if (is_null($owner_address)) {
             throw new TronException('Owner Address not specified');
         }
 
@@ -304,6 +304,177 @@ class TransactionBuilder
 
         return $this->tron->getManager()->request('wallet/unfreezebalance', [
             'owner_address' =>  $this->tron->address2HexString($owner_address),
+            'resource' => $resource
+        ]);
+    }
+
+    public function freezeBalanceV2(float $amount = 0, string $resource = 'BANDWIDTH', string $address)
+    {
+        if (empty($address))
+            throw new TronException('Address not specified');
+
+        if (!in_array($resource, ['BANDWIDTH', 'ENERGY'])) {
+            throw new TronException('Invalid resource provided: Expected "BANDWIDTH" or "ENERGY"');
+        }
+
+        if (!is_float($amount)) {
+            throw new TronException('Invalid amount provided');
+        }
+
+        return $this->tron->getManager()->request('wallet/freezebalancev2', [
+            'owner_address' => $this->tron->address2HexString($address),
+            'frozen_balance' => $this->tron->toTron($amount),
+            'resource' => $resource
+        ]);
+    }
+
+    public function unfreezeBalanceV2(float $amount = 0, string $resource = 'BANDWIDTH', string $owner_address)
+    {
+        if (is_null($owner_address)) {
+            throw new TronException('Owner Address not specified');
+        }
+
+        if (!in_array($resource, ['BANDWIDTH', 'ENERGY'])) {
+            throw new TronException('Invalid resource provided: Expected "BANDWIDTH" or "ENERGY"');
+        }
+
+        if (!is_float($amount)) {
+            throw new TronException('Invalid amount provided');
+        }
+
+        return $this->tron->getManager()->request('wallet/unfreezebalancev2', [
+            'owner_address' =>  $this->tron->address2HexString($owner_address),
+            'resource' => $resource,
+            'unfreeze_balance' => $this->tron->toTron($amount),
+        ]);
+    }
+
+    public function getDelegatedResourceV2(string $from_address, string $to_address)
+    {
+        if (empty($from_address))
+            throw new TronException('Address FROM not specified');
+
+        if (empty($to_address))
+            throw new TronException('Address TO not specified');
+
+        return $this->tron->getManager()->request('wallet/getdelegatedresourcev2', [
+            'fromAddress' =>  $this->tron->address2HexString($from_address),
+            'toAddress' =>  $this->tron->address2HexString($to_address)
+        ]);
+    }
+
+    public function getDelegatedResourceIndex(string $address)
+    {
+        if (empty($address))
+            throw new TronException('Address not specified');
+
+        return $this->tron->getManager()->request('walletsolidity/getdelegatedresourceaccountindex', [
+            'value' =>  $this->tron->address2HexString($address)
+        ]);
+    }
+
+    public function getDelegatedResourceIndexV2(string $address)
+    {
+        if (empty($address))
+            throw new TronException('Address not specified');
+
+        return $this->tron->getManager()->request('walletsolidity/getdelegatedresourceaccountindexv2', [
+            'value' =>  $this->tron->address2HexString($address)
+        ]);
+    }
+
+    public function getAccountResource(string $address)
+    {
+        if (empty($address))
+            throw new TronException('Address not specified');
+
+        return $this->tron->getManager()->request('wallet/getaccountresource', [
+            'address' =>  $this->tron->address2HexString($address)
+        ]);
+    }
+
+    public function withdrawExpireUnfreeze(string $owner_address)
+    {
+        if (is_null($owner_address)) {
+            throw new TronException('Owner Address not specified');
+        }
+
+        return $this->tron->getManager()->request('wallet/withdrawexpireunfreeze', [
+            'owner_address' =>  $this->tron->address2HexString($owner_address)
+        ]);
+    }
+
+    public function getAvailableUnfreezeCount(string $owner_address)
+    {
+        if (is_null($owner_address)) {
+            throw new TronException('Owner Address not specified');
+        }
+
+        return $this->tron->getManager()->request('wallet/getavailableunfreezecount', [
+            'owner_address' =>  $this->tron->address2HexString($owner_address)
+        ]);
+    }
+    public function getCanWithdrawUnfreezeAmount(string $owner_address, int $timestamp = 0)
+    {
+        if (is_null($owner_address)) {
+            throw new TronException('Owner Address not specified');
+        }
+
+        return $this->tron->getManager()->request('wallet/getcanwithdrawunfreezeamount', [
+            'owner_address' =>  $this->tron->address2HexString($owner_address),
+            'timestamp' => $timestamp
+        ]);
+    }
+
+    public function delegateResource(string $receiver_address, float $balance = 0, string $resource = 'BANDWIDTH', string $owner_address, bool $lock = false, int $duration = 3)
+    {
+        if (empty($receiver_address))
+            throw new TronException('Address not specified');
+
+        if (!in_array($resource, ['BANDWIDTH', 'ENERGY'])) {
+            throw new TronException('Invalid resource provided: Expected "BANDWIDTH" or "ENERGY"');
+        }
+
+        if (!is_float($balance)) {
+            throw new TronException('Invalid amount provided');
+        }
+
+        if (is_null($owner_address)) {
+            throw new TronException('Owner Address not specified');
+        }
+
+        return $this->tron->getManager()->request('wallet/delegateresource', [
+            'owner_address' => $this->tron->address2HexString($owner_address),
+            'receiver_address' => $this->tron->address2HexString($receiver_address),
+            'balance' => $this->tron->toTron($balance),
+            'resource' => $resource,
+            'lock' => $lock,
+            'duration' => $duration
+        ]);
+    }
+
+    public function unDelegateResource(string $receiver_address, float $balance = 0, string $resource = 'BANDWIDTH', string $owner_address)
+    {
+        if (empty($receiver_address))
+            throw new TronException('Address not specified');
+
+        if (!in_array($resource, ['BANDWIDTH', 'ENERGY'])) {
+            throw new TronException('Invalid resource provided: Expected "BANDWIDTH" or "ENERGY"');
+        }
+
+        if (!is_float($balance)) {
+            throw new TronException('Invalid amount provided');
+        }
+
+        if (is_null($owner_address)) {
+            throw new TronException('Owner Address not specified');
+        }
+
+
+        return $this->tron->getManager()->request('wallet/undelegateresource', [
+            'owner_address' => $this->tron->address2HexString($owner_address),
+            'receiver_address' => $this->tron->address2HexString($receiver_address),
+            'balance' => $this->tron->toTron($balance),
             'resource' => $resource
         ]);
     }
@@ -340,7 +511,7 @@ class TransactionBuilder
      */
     public function updateToken(string $description, string $url, int $freeBandwidth = 0, int $freeBandwidthLimit = 0, $address = null)
     {
-        if(is_null($address)) {
+        if (is_null($address)) {
             throw new TronException('Owner Address not specified');
         }
 

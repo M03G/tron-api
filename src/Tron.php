@@ -957,7 +957,7 @@ class Tron implements TronInterface
      */
     public function freezeBalance(float $amount = 0, int $duration = 3, string $resource = 'BANDWIDTH', string $owner_address = null)
     {
-        if($owner_address == null) {
+        if ($owner_address == null) {
             $owner_address = $this->address['hex'];
         }
 
@@ -979,12 +979,134 @@ class Tron implements TronInterface
      */
     public function unfreezeBalance(string $resource = 'BANDWIDTH', string $owner_address = null)
     {
-        if($owner_address == null) {
+        if ($owner_address == null) {
             $owner_address = $this->address['hex'];
         }
 
         $unfreeze = $this->transactionBuilder->unfreezeBalance($resource, $owner_address);
         $signedTransaction = $this->signTransaction($unfreeze);
+        $response = $this->sendRawTransaction($signedTransaction);
+
+        return array_merge($response, $signedTransaction);
+    }
+
+    public function freezeBalanceV2(float $amount = 0, string $resource = 'BANDWIDTH', string $owner_address = null)
+    {
+        if ($owner_address == null) {
+            $owner_address = $this->address['hex'];
+        }
+
+        $freeze = $this->transactionBuilder->freezeBalanceV2($amount, $resource, $owner_address);
+        $signedTransaction = $this->signTransaction($freeze);
+        $response = $this->sendRawTransaction($signedTransaction);
+
+        return array_merge($response, $signedTransaction);
+    }
+
+    public function unfreezeBalanceV2(float $amount = 0, string $resource = 'BANDWIDTH', string $owner_address = null)
+    {
+        if ($owner_address == null) {
+            $owner_address = $this->address['hex'];
+        }
+
+        $unfreeze = $this->transactionBuilder->unfreezeBalanceV2($amount, $resource, $owner_address);
+        $signedTransaction = $this->signTransaction($unfreeze);
+        $response = $this->sendRawTransaction($signedTransaction);
+
+        return array_merge($response, $signedTransaction);
+    }
+
+    public function withdrawExpireUnfreeze(string $owner_address = null)
+    {
+        if ($owner_address == null) {
+            $owner_address = $this->address['hex'];
+        }
+
+        $wd = $this->transactionBuilder->withdrawExpireUnfreeze($owner_address);
+        $signedTransaction = $this->signTransaction($wd);
+        $response = $this->sendRawTransaction($signedTransaction);
+
+        return array_merge($response, $signedTransaction);
+    }
+
+    public function getAccountResource(string $address = null)
+    {
+        if ($address == null) {
+            $address = $this->address['hex'];
+        }
+
+        $resource = $this->transactionBuilder->getAccountResource($address);
+
+        return array_merge($resource);
+    }
+
+    public function getDelegatedResourceV2(string $from, string $to)
+    {
+        $resource = $this->transactionBuilder->getDelegatedResourceV2($from, $to);
+
+        return array_merge($resource);
+    }
+
+    public function getDelegatedResourceIndex(string $address)
+    {
+        $resource = $this->transactionBuilder->getDelegatedResourceIndex($address);
+
+        return array_merge($resource);
+    }
+
+    public function getDelegatedResourceIndexV2(string $address)
+    {
+        $resource = $this->transactionBuilder->getDelegatedResourceIndexV2($address);
+
+        return array_merge($resource);
+    }
+
+    public function getAvailableUnfreezeCount(string $owner_address = null)
+    {
+        if ($owner_address == null) {
+            $owner_address = $this->address['hex'];
+        }
+
+        $unfreeze = $this->transactionBuilder->getAvailableUnfreezeCount($owner_address);
+
+        return array_merge($unfreeze);
+    }
+
+    public function getCanWithdrawUnfreezeAmount(string $owner_address = null, int $timestamp = 0)
+    {
+        if ($owner_address == null) {
+            $owner_address = $this->address['hex'];
+        }
+        if (!$timestamp || $timestamp <= 0) {
+            $timestamp = time();
+        }
+
+        $unfreeze = $this->transactionBuilder->getCanWithdrawUnfreezeAmount($owner_address, $timestamp);
+
+        return array_merge($unfreeze);
+    }
+
+    public function delegateResource(string $receiver_address, float $balance = 0, string $resource = 'BANDWIDTH', string $owner_address = null, bool $lock = false, int $lock_period = 3)
+    {
+        if ($owner_address == null) {
+            $owner_address = $this->address['hex'];
+        }
+
+        $delegate = $this->transactionBuilder->delegateResource($receiver_address, $balance, $resource, $owner_address, $lock, $lock_period);
+        $signedTransaction = $this->signTransaction($delegate);
+        $response = $this->sendRawTransaction($signedTransaction);
+
+        return array_merge($response, $signedTransaction);
+    }
+
+    public function unDelegateResource(string $receiver_address, float $balance = 0, string $resource = 'BANDWIDTH', string $owner_address = null)
+    {
+        if ($owner_address == null) {
+            $owner_address = $this->address['hex'];
+        }
+
+        $freeze = $this->transactionBuilder->unDelegateResource($receiver_address, $balance, $resource, $owner_address);
+        $signedTransaction = $this->signTransaction($freeze);
         $response = $this->sendRawTransaction($signedTransaction);
 
         return array_merge($response, $signedTransaction);
@@ -999,7 +1121,7 @@ class Tron implements TronInterface
      */
     public function withdrawBlockRewards(string $owner_address = null)
     {
-        if($owner_address == null) {
+        if ($owner_address == null) {
             $owner_address = $this->address['hex'];
         }
 
@@ -1027,7 +1149,7 @@ class Tron implements TronInterface
                                 int $freeBandwidthLimit = 0,
                                 string $owner_address = null)
     {
-        if($owner_address == null) {
+        if ($owner_address == null) {
             $owner_address = $this->address['hex'];
         }
 
